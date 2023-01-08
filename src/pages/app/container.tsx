@@ -1,6 +1,5 @@
 import { Icon } from "@iconify-icon/react";
 import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
-import SplitPane from "react-split-pane";
 import SimpleBar from "simplebar-react";
 import IButton from "../../components/IconButton";
 
@@ -24,6 +23,7 @@ import {
 import dayjs from "dayjs";
 import NoteItem from "components/note/NoteItem";
 import TrashNoteItem from "components/note/TrashItem";
+import { Allotment } from "allotment";
 
 function NotesAppContainer() {
   const dispath = useAppDispatch();
@@ -84,9 +84,10 @@ function NotesAppContainer() {
   }
 
   const isEmpty = notes.allIds.length < 1;
+
   return (
-    <div>
-      <SplitPane split="vertical" minSize={250} maxSize={500} defaultSize={400}>
+    <Allotment>
+      <Allotment.Pane minSize={250} maxSize={500} preferredSize={400}>
         <div className="note-list-container h-1">
           <div
             className="flex"
@@ -161,12 +162,14 @@ function NotesAppContainer() {
             </p>
           )}
         </div>
+      </Allotment.Pane>
+      <Allotment.Pane className="w-1">
         <div className="note-editor h-1">
           <Outlet />
           <NoteMenuBar />
         </div>
-      </SplitPane>
-    </div>
+      </Allotment.Pane>
+    </Allotment>
   );
 }
 
