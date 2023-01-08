@@ -6,8 +6,8 @@ import useAuth from "app/hooks/useAuth";
 
 function LoginPage() {
   const { login } = useAuth();
-  const [email, setEmail] = useState("mahi@itsbohara.com");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<any>(null);
 
   async function handleLoginSubmit(e) {
