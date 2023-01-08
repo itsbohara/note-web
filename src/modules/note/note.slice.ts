@@ -20,6 +20,7 @@ export type NoteState = {
   error: string | null;
   saved: boolean;
   last_saved?: any;
+  writeMode: boolean;
 };
 
 const initialState: NoteState = {
@@ -27,6 +28,7 @@ const initialState: NoteState = {
   error: null,
   notes: { byId: {}, allIds: [] },
   saved: true,
+  writeMode: true,
 };
 
 const slice = createSlice({
@@ -76,6 +78,11 @@ const slice = createSlice({
       state.notes.allIds = pull(state.notes.allIds, noteID);
     },
 
+    onClearTrash(state) {
+      state.notes.byId = {};
+      state.notes.allIds = [];
+    },
+
     onUpdateNote(state, action) {
       const note = action.payload;
       state.notes.byId[note.id] = note;
@@ -87,6 +94,9 @@ const slice = createSlice({
     },
     onUpdateLastSave(state, action) {
       state.last_saved = action.payload;
+    },
+    onWritingMode(state, action) {
+      state.writeMode = action.payload;
     },
   },
 });
@@ -103,6 +113,7 @@ export const {
   onDeleteNote,
   onUpdateNote,
   onUpdateLastSave,
+  onWritingMode,
 } = slice.actions;
 
 // ----------------------------------------------------------------------
@@ -115,7 +126,7 @@ export function getNotes(props?: noteProps) {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get(
-        `/notes${props?.trash ? "&trash=true" : ""}`
+        `/notes${props?.trash ? "?trash=true" : ""}`
       );
       dispatch(slice.actions.getNotesSuccess(response.data));
     } catch (error) {
@@ -180,11 +191,37 @@ export function trashNote(noteID) {
   };
 }
 
+export function restoreTrashNote(noteID) {
+  return async (dispatch) => {
+    try {
+      await axios.patch(`/note/${noteID}`, { trash: false });
+      dispatch(slice.actions.onDeleteNote(noteID));
+      dispatch(setNotice({ message: "Note restored!" }));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+      dispatch(setNotice({ message: error, variant: "error" }));
+    }
+  };
+}
+
 export function deleteNote(noteID) {
   return async (dispatch) => {
     try {
       await axios.delete(`/note/${noteID}`);
       dispatch(slice.actions.onDeleteNote(noteID));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+      dispatch(setNotice({ message: error, variant: "error" }));
+    }
+  };
+}
+
+export function clearTrash() {
+  return async (dispatch) => {
+    try {
+      await axios.delete("/trash");
+      dispatch(slice.actions.onClearTrash());
+      dispatch(setNotice({ message: "Trash cleared!" }));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
       dispatch(setNotice({ message: error, variant: "error" }));

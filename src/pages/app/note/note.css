@@ -11,6 +11,7 @@
 .note-container .editor {
   padding: 15px 10px;
   outline: none;
+  overflow: scroll;
 }
 .note-container .editor .ce-block__content,
 .note-container .editor .ce-toolbar__content {

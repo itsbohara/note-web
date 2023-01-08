@@ -58,6 +58,11 @@
       position: absolute;
       top: 15px;
       right: 15px;
+
+      &.trash {
+        display: flex;
+        gap: 5px;
+      }
     }
   }
 }

@@ -11,6 +11,10 @@
   width: 100%;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .flex {
   display: flex;
   &.column {

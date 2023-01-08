@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import PreLoaderV1 from "./PreLoader/index";
 
 function LoadingScreen() {
   return (
-    <div>LoadingScreen</div>
-  )
+    <div className="h-1" style={{ display: "grid", placeContent: "center" }}>
+      <PreLoaderV1 />
+    </div>
+  );
 }
 
-export default LoadingScreen
+export default LoadingScreen;

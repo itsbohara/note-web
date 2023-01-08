@@ -1,5 +1,5 @@
 import { Icon } from "@iconify-icon/react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import SplitPane from "react-split-pane";
 import SimpleBar from "simplebar-react";
 import IButton from "../../components/IconButton";
@@ -8,25 +8,40 @@ import "./container.css";
 import NoteMenuBar from "../../modules/note/noteMenuBar";
 import { useAppSelector, useAppDispatch } from "../../app/hooks/useApp";
 import { useEffect } from "react";
-import { getNotes, onUpdateLastSave } from "modules/note/note.slice";
+import {
+  getNotes,
+  onUpdateLastSave,
+  onWritingMode,
+  restoreTrashNote,
+} from "modules/note/note.slice";
 import PreLoaderV1 from "../../components/PreLoader/index";
 import { iterateObject } from "../../utils/object";
-import { deleteNote, trashNote } from "../../modules/note/note.slice";
+import {
+  deleteNote,
+  trashNote,
+  clearTrash,
+} from "../../modules/note/note.slice";
 import dayjs from "dayjs";
+import NoteItem from "components/note/NoteItem";
+import TrashNoteItem from "components/note/TrashItem";
 
 function NotesAppContainer() {
   const dispath = useAppDispatch();
-  const { notes, isLoading } = useAppSelector((state) => state.notes);
+  const { notes, isLoading, writeMode } = useAppSelector(
+    (state) => state.notes
+  );
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isTrash = pathname.includes("/trash");
   function handleNewNoteNavigation() {
+    if (!writeMode) dispath(onWritingMode(true));
     navigate("/notes/new");
   }
 
   useEffect(() => {
-    dispath(getNotes());
-  }, []);
-
-  const isEmpty = false;
+    if (isTrash) dispath(getNotes({ trash: true }));
+    else dispath(getNotes());
+  }, [pathname]);
 
   useEffect(() => {
     document.onkeydown = (e) => {
@@ -51,13 +66,24 @@ function NotesAppContainer() {
   );
 
   // last note updated time
-  dispath(onUpdateLastSave(_notes[0].updatedAt));
+  if (_notes.length > 0) dispath(onUpdateLastSave(_notes[0].updatedAt));
 
-  function handleNoteDelete(noteID) {
-    // dispath(deleteNote(noteID));
+  function handleNoteTrash(noteID) {
     dispath(trashNote(noteID));
   }
 
+  function handleNoteDelete(noteID) {
+    dispath(deleteNote(noteID));
+  }
+  function handleNoteRestore(noteID) {
+    dispath(restoreTrashNote(noteID));
+  }
+
+  function handleTrashClean() {
+    dispath(clearTrash());
+  }
+
+  const isEmpty = notes.allIds.length < 1;
   return (
     <div>
       <SplitPane split="vertical" minSize={250} maxSize={500} defaultSize={400}>
@@ -82,39 +108,46 @@ function NotesAppContainer() {
               <input type="text" placeholder="Search" />
               <Icon icon="gg:sort-az" />
             </div>
-            <IButton
-              icon={"material-symbols:post-add-rounded"}
-              circular={true}
-              variant="fill"
-              color="green"
-              onClick={handleNewNoteNavigation}
-            />
+            {!isTrash && (
+              <IButton
+                icon={"material-symbols:post-add-rounded"}
+                circular={true}
+                variant="fill"
+                color="green"
+                onClick={handleNewNoteNavigation}
+              />
+            )}
+            {isTrash && (
+              <IButton
+                icon={"material-symbols:delete"}
+                circular={true}
+                variant="fill"
+                color="red"
+                onClick={handleTrashClean}
+              />
+            )}
           </div>
-          <SimpleBar
-            style={{
-              height: "calc(100vh - 70px)",
-              flexGrow: 1,
-              flexWrap: "wrap",
-            }}
-          >
-            {_notes.map((note) => (
-              <NavLink to={`/notes/${note.id}`} className="note_item">
-                <h4>{note.title}</h4>
-                {/* <p>note body first line ..... </p> */}
-                <span>Last updated: {dayjs(note.updatedAt).fromNow(true)}</span>
-                <div className="note-menu">
-                  <IButton
-                    icon={"material-symbols:delete"}
-                    circular={true}
-                    variant="outline"
-                    color="red"
-                    size="small"
-                    onClick={() => handleNoteDelete(note.id)}
+          {!isEmpty && (
+            <SimpleBar
+              style={{
+                height: "calc(100vh - 70px)",
+                flexGrow: 1,
+                flexWrap: "wrap",
+              }}
+            >
+              {_notes.map((note) =>
+                isTrash ? (
+                  <TrashNoteItem
+                    note={note}
+                    onDelete={handleNoteDelete}
+                    onRestore={handleNoteRestore}
                   />
-                </div>
-              </NavLink>
-            ))}
-          </SimpleBar>
+                ) : (
+                  <NoteItem note={note} onTrash={handleNoteTrash} />
+                )
+              )}
+            </SimpleBar>
+          )}
           {isEmpty && (
             <p
               className="empty-items-list flex h-1"

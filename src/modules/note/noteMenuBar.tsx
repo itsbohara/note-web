@@ -4,12 +4,47 @@ import "./menu-bar.css";
 import IButton from "../../components/IconButton";
 import { useAppSelector } from "app/hooks/useApp";
 import dayjs from "dayjs";
+import { useLocation, useParams } from "react-router-dom";
+import { useAppDispatch } from "../../app/hooks/useApp";
+import { onWritingMode } from "./note.slice";
 
 function NoteMenuBar() {
-  const { saved, last_saved } = useAppSelector((state) => state.notes);
+  const { saved, last_saved, writeMode } = useAppSelector(
+    (state) => state.notes
+  );
+  const { noteID } = useParams();
+  const dispath = useAppDispatch();
+  function toggleEditMode() {
+    dispath(onWritingMode(!writeMode));
+  }
   return (
     <div className="menu-bar">
-      <div></div>
+      <div
+        className="flex"
+        style={{
+          alignItems: "stretch",
+          justifyContent: "flex-end",
+          alignSelf: "stretch",
+        }}
+      >
+        {noteID && (
+          <button onClick={toggleEditMode}>
+            <Icon
+              icon={
+                writeMode
+                  ? "material-symbols:edit-square-outline-rounded"
+                  : "icon-park-outline:preview-open"
+              }
+              height="20"
+            />
+          </button>
+        )}
+        {noteID && (
+          <button>
+            <Icon icon="material-symbols:delete-outline-rounded" height="20" />
+          </button>
+        )}
+      </div>
       <div
         className="flex"
         style={{

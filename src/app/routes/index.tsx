@@ -19,12 +19,13 @@ import AuthGuard from "app/guards/AuthGuard";
 
 // import SettingsPage from "../modules/app/settings/settings";
 // import MyProfilePage from "../modules/app/profile/myprofile";
+import LoadingScreen from "../../components/LoadingScreen";
 
 const Loadable = (Component) => (props) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { pathname } = useLocation();
   return (
-    <Suspense fallback={<>Loading .... </>}>
+    <Suspense fallback={<LoadingScreen />}>
       <Component {...props} />
     </Suspense>
   );
@@ -73,6 +74,14 @@ function Router() {
             { index: true, element: <EmptyContainer /> },
             { path: "new", element: <NoteContainer /> },
             { path: ":noteID", element: <NoteContainer /> },
+          ],
+        },
+        {
+          path: "trash",
+          element: <NotesAppContainer />,
+          children: [
+            { index: true, element: <NoteContainer /> },
+            // { path: ":noteID", element: <NoteContainer isTrash /> },
           ],
         },
         // { path: "note/:noteID", element: <NoteView /> },

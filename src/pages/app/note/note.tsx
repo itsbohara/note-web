@@ -28,9 +28,12 @@ import {
   getNoteSuccess,
   newNote,
   onNoteSaveHandle,
+  onWritingMode,
 } from "modules/note/note.slice";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { updateNote } from "../../../modules/note/note.slice";
+import EmptyContainer from "../emptyContainer";
+import SimpleBar from "simplebar-react";
 
 const EDITOR_JS_TOOLS = {
   embed: Embed,
@@ -54,7 +57,9 @@ const ReactEditorJS = createReactEditorJS();
 
 function NoteContainer() {
   const dispath = useAppDispatch();
-  const { saved, activeNote, notes } = useAppSelector((state) => state.notes);
+  const { saved, activeNote, notes, writeMode } = useAppSelector(
+    (state) => state.notes
+  );
   const [title, setTitle] = useState("");
   const [note, setNote] = useState<any>({});
 
@@ -66,11 +71,19 @@ function NoteContainer() {
 
   const [loading, setLoading] = useState(true);
 
+  const [editor, setEditor] = useState<EditorJS | any>(undefined);
+
+  const { pathname } = useLocation();
+  const isTrash = pathname.includes("/trash");
+  const isNewNote = pathname === "/notes/new";
+
   const handleInitialize = useCallback((instance) => {
+    console.log(instance);
     editorCore.current = instance;
   }, []);
+
   async function handleEditorChange(e) {
-    const noteData = await editorCore.current!.save();
+    const noteData = await e?.saver?.save();
     setNote(noteData);
   }
 
@@ -122,19 +135,18 @@ function NoteContainer() {
   }, [noteID]);
 
   useEffect(() => {
-    if (!activeNote) return;
-    console.log("updating title ??");
+    if (!activeNote || !editor) return;
     setTitle(activeNote.title);
     let noteData = { blocks: [] };
     try {
       noteData = JSON.parse(activeNote.body);
       setNote(noteData);
-      editorCore.current?.render(noteData);
+      editor?.isReady.then(() => editor.render(noteData));
     } catch (error) {
       console.log("failed to load note");
     }
     setLoading(false);
-  }, [activeNote]);
+  }, [activeNote, editor]);
 
   useEffect(() => {
     if (loading) return;
@@ -151,6 +163,39 @@ function NoteContainer() {
       handleSaveNote();
     }
   }
+
+  // return empty note container if its trash/fav note view
+  if (isTrash && !activeNote) return <EmptyContainer />;
+
+  useEffect(() => {
+    try {
+      var _editor = new EditorJS({
+        holder: "noteEditor",
+        tools: EDITOR_JS_TOOLS,
+        data: note,
+        placeholder: "Write your note here ...",
+        onChange: handleEditorChange,
+        readOnly: !writeMode,
+      });
+      setEditor(_editor);
+    } catch (er) {
+      console.log("editor load failed");
+      console.log(er);
+    }
+    return () => setEditor(undefined);
+  }, []);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    editor.isReady.then(() => {
+      if (writeMode && editor.readOnly?.isEnabled) {
+        editor.readOnly.toggle();
+      } else if (!writeMode && !editor.readOnly?.isEnabled) {
+        editor.readOnly.toggle();
+      }
+    });
+  }, [writeMode]);
 
   return (
     <div className="note-container flex-1 h-1">
@@ -176,15 +221,26 @@ function NoteContainer() {
         </nav>
       </div>
       <div className="editor w-1">
-        {!loading && (
-          <ReactEditorJS
-            onInitialize={handleInitialize}
-            onChange={handleEditorChange}
-            defaultValue={note}
-            tools={EDITOR_JS_TOOLS}
-            placeholder="Write your note here ..."
-          />
-        )}
+        <SimpleBar
+          style={{
+            height: "calc(100vh - 120px)",
+            flexGrow: 1,
+            flexWrap: "wrap",
+          }}
+        >
+          <div id="noteEditor"></div>
+          {!loading && (
+            // <ReactEditorJS
+            //   readOnly={!writeMode}
+            //   onInitialize={handleInitialize}
+            //   onChange={handleEditorChange}
+            //   defaultValue={note}
+            //   tools={EDITOR_JS_TOOLS}
+            //   placeholder="Write your note here ..."
+            // />
+            <></>
+          )}
+        </SimpleBar>
       </div>
     </div>
   );

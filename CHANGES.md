@@ -1,5 +1,9 @@
 # Note APP Changes Log
 
+## v1.0.1
+- trash clean
+- 
+
 ## v1.0.0
 
 - authentication
