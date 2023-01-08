@@ -1,0 +1,139 @@
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+.h-1 {
+  height: 100%;
+}
+
+.w-1 {
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+}
+.flex.column {
+  flex-direction: column;
+}
+.flex .flex-1 {
+  flex: 1;
+}
+.flex.ai-center {
+  align-items: center;
+}
+
+svg {
+  margin: 0 !important;
+}
+
+body._light .icon-button {
+  color: #000;
+}
+
+.icon-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  color: #000;
+}
+.icon-button:hover {
+  opacity: 0.8;
+  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+}
+.icon-button[data-circular=true] {
+  border-radius: 50%;
+}
+.icon-button[data-size=small] {
+  height: 35px;
+  width: 35px;
+}
+.icon-button[data-size=medium] {
+  height: 45px;
+  width: 45px;
+}
+.icon-button[data-size=large] {
+  height: 60px;
+  width: 60px;
+}
+.icon-button[data-variant=fill] {
+  color: #eff !important;
+}
+.icon-button[data-variant=fill][data-color=red] {
+  background-color: #d23f31;
+}
+.icon-button[data-variant=fill][data-color=blue] {
+  background-color: #4285f4;
+}
+.icon-button[data-variant=fill][data-color=green] {
+  background-color: #0f9d58;
+}
+.icon-button[data-variant=outline][data-color=red] {
+  border: 1px solid #d23f31;
+}
+.icon-button[data-variant=outline][data-color=blue] {
+  border: 1px solid #4285f4;
+}
+.icon-button[data-variant=outline][data-color=green] {
+  border: 1px solid #0f9d58;
+}
+
+.card {
+  padding: 2em;
+}
+
+.Resizer {
+  background: #000;
+  opacity: 0.4;
+  z-index: 1;
+  box-sizing: border-box;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding;
+  background-clip: padding-box;
+}
+
+.Resizer:hover {
+  transition: all 2s ease;
+}
+
+.Resizer.horizontal {
+  height: 11px;
+  margin: -5px 0;
+  border-top: 5px solid rgba(255, 255, 255, 0);
+  border-bottom: 5px solid rgba(255, 255, 255, 0);
+  cursor: row-resize;
+  width: 100%;
+}
+
+.Resizer.horizontal:hover {
+  border-top: 5px solid rgba(0, 0, 0, 0.5);
+  border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+}
+
+.Resizer.vertical {
+  width: 11px;
+  margin: 0 -5px;
+  border-left: 5px solid rgba(255, 255, 255, 0);
+  border-right: 5px solid rgba(255, 255, 255, 0);
+  cursor: col-resize;
+}
+
+.Resizer.vertical:hover {
+  border-left: 5px solid rgba(0, 0, 0, 0.5);
+  border-right: 5px solid rgba(0, 0, 0, 0.5);
+}
+
+.Resizer.disabled {
+  cursor: not-allowed;
+}
+
+.Resizer.disabled:hover {
+  border-color: transparent;
+}/*# sourceMappingURL=App.css.map */

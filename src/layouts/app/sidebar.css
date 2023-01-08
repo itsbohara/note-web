@@ -1,0 +1,32 @@
+.sidebar {
+  background-color: #f6f6f6;
+  padding: 10px 20px;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sidebar ul li a {
+  padding: 7px 20px;
+  -webkit-user-select: none !important;
+     -moz-user-select: none !important;
+      -ms-user-select: none !important;
+          user-select: none !important;
+  gap: 10px;
+  align-items: center;
+  font-size: 17px;
+  border-radius: 40px;
+}
+.sidebar ul li a:hover {
+  cursor: pointer;
+  background-color: #333333 !important;
+  color: #eff;
+}
+.sidebar ul li a.active {
+  color: #eff;
+  background-color: #222;
+}/*# sourceMappingURL=sidebar.css.map */

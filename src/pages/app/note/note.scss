@@ -1,0 +1,24 @@
+.note-container {
+  .editor-header {
+    padding: 15px 10px;
+    border-bottom: 1px solid #dfe1e4;
+
+    input {
+      font-size: 1.5rem;
+      font-weight: 600;
+      border: none;
+      outline: none;
+    }
+  }
+
+  .editor {
+    padding: 15px 10px;
+    outline: none;
+
+    .ce-block__content,
+    .ce-toolbar__content {
+      max-width: calc(100% - 100px) !important;
+    //   max-width: unset;
+    }
+  }
+}

@@ -1,0 +1,60 @@
+.note-list-container {
+  display: flex;
+  flex-direction: column;
+}
+.note-list-container .search-container {
+  background: rgba(242, 241, 238, 0.6);
+  display: flex;
+  border-radius: 100px;
+  border: 1px solid #333;
+  padding: 10px;
+  box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px inset;
+  color: #333;
+  align-items: center;
+  flex-grow: 1;
+}
+.note-list-container .search-container input {
+  outline: none;
+  flex: 1;
+  font-size: 1rem;
+  background: transparent;
+  border: none;
+  padding: 4px 10px;
+}
+.note-list-container .search-container input:focus {
+  border: none;
+}
+.note-list-container .note_item {
+  position: relative;
+  display: block;
+  padding: 20px;
+  border-bottom: 1px solid #d1d1d1;
+  color: #333;
+}
+.note-list-container .note_item h4,
+.note-list-container .note_item p {
+  margin: 0;
+}
+.note-list-container .note_item h4 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.note-list-container .note_item span {
+  color: #888;
+}
+.note-list-container .note_item:hover {
+  background-color: rgba(200, 232, 248, 0.4392156863);
+}
+.note-list-container .note_item:hover .note-menu {
+  opacity: 1;
+}
+.note-list-container .note_item .note-menu {
+  z-index: 1000;
+  opacity: 0;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}/*# sourceMappingURL=container.css.map */
