@@ -6,7 +6,7 @@ import IButton from "../../components/IconButton";
 import "./container.css";
 import NoteMenuBar from "../../modules/note/noteMenuBar";
 import { useAppSelector, useAppDispatch } from "../../app/hooks/useApp";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   getNotes,
   onUpdateLastSave,
@@ -31,6 +31,10 @@ function NotesAppContainer() {
   const { notes, isLoading, writeMode } = useAppSelector(
     (state) => state.notes
   );
+
+  const [search, setSearch] = useState(false);
+  const [searchRes, setSearchRes] = useState<any>([]);
+
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isTrash = pathname.includes("/trash");
@@ -59,6 +63,10 @@ function NotesAppContainer() {
     if (isLoading) return;
     // clear active note, if notes lenght is less than 1
     if (notes.allIds.length < 1) dispath(getNoteSuccess(null));
+
+    return () => {
+      setSearch(false);
+    };
   }, [notes]);
 
   if (isLoading) {
@@ -92,7 +100,13 @@ function NotesAppContainer() {
     dispath(clearTrash());
   }
 
-  const isEmpty = notes.allIds.length < 1;
+  const isEmpty = notes.allIds.length < 1 || (search && searchRes.length < 1);
+
+  function handleNoteSearch(q) {
+    setSearch(q.trim() !== "");
+    var _Res = _notes.filter((note) => note.title.toLowerCase().includes(q));
+    setSearchRes(_Res);
+  }
 
   return (
     <Allotment>
@@ -115,7 +129,11 @@ function NotesAppContainer() {
           >
             <div className="search-container">
               <Icon icon="ic:round-search" />
-              <input type="text" placeholder="Search" />
+              <input
+                type="text"
+                placeholder="Search"
+                onChange={(e) => handleNoteSearch(e.target.value.toLowerCase())}
+              />
               <Icon icon="gg:sort-az" />
             </div>
             {!isTrash && (
@@ -145,7 +163,7 @@ function NotesAppContainer() {
                 flexWrap: "wrap",
               }}
             >
-              {_notes.map((note) =>
+              {[...(search ? searchRes : _notes)].map((note) =>
                 isTrash ? (
                   <TrashNoteItem
                     note={note}
