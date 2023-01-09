@@ -52,19 +52,34 @@ const EDITOR_JS_TOOLS = {
   inlineCode: InlineCode,
   // simpleImage: SimpleImage,
 };
-
 const ReactEditorJS = createReactEditorJS();
 
 function NoteContainer() {
+  const { activeNote } = useAppSelector((state) => state.notes);
+  const { pathname } = useLocation();
+  const isTrash = pathname.includes("/trash");
+  const isNewNote = pathname === "/notes/new";
+
+  // return empty note container if its trash/fav note view
+  if (isTrash && !activeNote) return <EmptyContainer />;
+
+  return <NoteViewEdit isNewNote={isNewNote} isTrash={isTrash} />;
+}
+
+export default NoteContainer;
+
+function NoteViewEdit({ isNewNote, isTrash }) {
   const dispath = useAppDispatch();
-  const { saved, activeNote, notes, writeMode } = useAppSelector(
+
+  const { activeNote, saved, notes, writeMode } = useAppSelector(
     (state) => state.notes
   );
+
   const [title, setTitle] = useState("");
   const [note, setNote] = useState<any>({});
 
   const editorCore = useRef<any>(null);
-  const titleRef = useRef<any>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const { noteID } = useParams();
@@ -73,14 +88,9 @@ function NoteContainer() {
 
   const [editor, setEditor] = useState<EditorJS | any>(undefined);
 
-  const { pathname } = useLocation();
-  const isTrash = pathname.includes("/trash");
-  const isNewNote = pathname === "/notes/new";
-
-  const handleInitialize = useCallback((instance) => {
-    console.log(instance);
-    editorCore.current = instance;
-  }, []);
+  // const handleInitialize = useCallback((instance) => {
+  //   editorCore.current = instance;
+  // }, []);
 
   async function handleEditorChange(e) {
     const noteData = await e?.saver?.save();
@@ -117,11 +127,13 @@ function NoteContainer() {
   }, [title, note]);
 
   useEffect(() => {
-    if (!noteID) {
+    if (!noteID && !isTrash) {
       editorCore.current?.clear();
       dispath(getNoteSuccess(null));
-      setLoading(false);
-      titleRef.current?.focus();
+      if (isNewNote) {
+        titleRef.current?.focus();
+        setLoading(false);
+      }
     }
     if (noteID) {
       const _note = notes.byId[noteID];
@@ -131,21 +143,31 @@ function NoteContainer() {
     return () => {
       setTitle((preState) => (!noteID ? preState : ""));
       setNote({});
+      setLoading(true);
     };
   }, [noteID]);
 
   useEffect(() => {
-    if (!activeNote || !editor) return;
+    if (!isTrash) return;
+
+    return () => {
+      dispath(getNoteSuccess(null));
+    };
+  }, [isTrash]);
+
+  useEffect(() => {
+    if (!activeNote) return;
     setTitle(activeNote.title);
+    if (!editor) return;
     let noteData = { blocks: [] };
     try {
       noteData = JSON.parse(activeNote.body);
       setNote(noteData);
       editor?.isReady.then(() => editor.render(noteData));
     } catch (error) {
-      console.log("failed to load note");
+      console.warn("failed to load note");
     }
-    setLoading(false);
+    // setLoading(false);
   }, [activeNote, editor]);
 
   useEffect(() => {
@@ -164,9 +186,6 @@ function NoteContainer() {
     }
   }
 
-  // return empty note container if its trash/fav note view
-  if (isTrash && !activeNote) return <EmptyContainer />;
-
   useEffect(() => {
     try {
       var _editor = new EditorJS({
@@ -175,17 +194,20 @@ function NoteContainer() {
         data: note,
         placeholder: "Write your note here ...",
         onChange: handleEditorChange,
-        readOnly: !writeMode,
+        readOnly: !writeMode || isTrash,
       });
       setEditor(_editor);
     } catch (er) {
-      console.log("editor load failed");
-      console.log(er);
+      console.warn("editor load failed");
     }
-    return () => setEditor(undefined);
+    return () => {
+      setEditor(undefined);
+    };
   }, []);
 
   useEffect(() => {
+    titleRef.current!.disabled = !writeMode || isTrash;
+
     if (!editor) return;
 
     editor.isReady.then(() => {
@@ -204,19 +226,23 @@ function NoteContainer() {
           ref={titleRef}
           type="text"
           placeholder="Untitled note"
-          className="flex-1"
+          className="flex-1 note_title"
           autoFocus
           value={title}
           onChange={(e) => handleTitleChange(e.target.value)}
         />
         <nav className="flex" style={{ gap: 5 }}>
-          <IButton
-            icon="mdi:progress-tick"
-            circular
-            size="small"
-            onClick={handleSaveNote}
-          />
-          <IButton icon="eos-icons:push-pin-outlined" circular size="small" />
+          {writeMode && !isTrash && (
+            <IButton
+              icon="mdi:progress-tick"
+              circular
+              size="small"
+              onClick={handleSaveNote}
+            />
+          )}
+          {!isTrash && (
+            <IButton icon="eos-icons:push-pin-outlined" circular size="small" />
+          )}
           <IButton icon="majesticons:maximize" circular size="small" />
         </nav>
       </div>
@@ -245,5 +271,3 @@ function NoteContainer() {
     </div>
   );
 }
-
-export default NoteContainer;

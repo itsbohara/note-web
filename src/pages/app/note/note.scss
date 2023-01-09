@@ -8,6 +8,10 @@
       font-weight: 600;
       border: none;
       outline: none;
+      &:disabled {
+        background: inherit;
+        color: inherit;
+      }
     }
   }
 

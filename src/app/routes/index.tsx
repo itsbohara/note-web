@@ -79,17 +79,17 @@ function Router() {
         {
           path: "trash",
           element: <NotesAppContainer />,
+          children: [{ index: true, element: <NoteContainer /> }],
+        },
+        {
+          path: "favorites",
+          element: <NotesAppContainer />,
           children: [
-            { index: true, element: <NoteContainer /> },
-            // { path: ":noteID", element: <NoteContainer isTrash /> },
+            { index: true, element: <EmptyContainer /> },
+            { path: ":noteID", element: <NoteContainer /> },
           ],
         },
-        // { path: "note/:noteID", element: <NoteView /> },
-        // { path: "trash", element: <TrashPage /> },
-        // { path: "trash/:noteID", element: <TrashNoteView /> },
-        // { path: "favorites", element: <FavNotes /> },
-        // { path: "activity", element: <ActivityPage /> },
-
+        { path: "activity", element: <NotAvailable /> },
         { path: "my-profile", element: <MyProfile /> },
         { path: "settings", element: <SettingsPage /> },
       ],
@@ -132,6 +132,8 @@ const EmptyContainer = Loadable(lazy(() => import("pages/app/emptyContainer")));
 // const NoteView = Loadable(lazy(() => import("pages/app/NoteView")));
 // const TrashDirectory = Loadable(lazy(() => import("pages/app/TrashDirectory")));
 // const TrashPage = Loadable(lazy(() => import("pages/app/trash")));
+
+const NotAvailable = Loadable(lazy(() => import("pages/NotAvailable")));
 
 const MyProfile = Loadable(lazy(() => import("pages/user/profile")));
 const SettingsPage = Loadable(lazy(() => import("pages/user/settings")));

@@ -1,3 +1,7 @@
+.split-view-view:has(> .note-list-container) {
+  z-index: 60;
+}
+
 .note-list-container {
   display: flex;
   flex-direction: column;

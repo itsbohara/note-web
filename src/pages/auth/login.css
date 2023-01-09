@@ -2,6 +2,7 @@ form {
   display: flex;
   flex-direction: column;
   width: 400px;
+  margin-top: 20px !important;
   margin: auto;
   gap: 10px;
 }

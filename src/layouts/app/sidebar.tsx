@@ -29,7 +29,7 @@ function Sidebar() {
           </NavLink>
         </li>
         <li>
-          <NavLink to={"/#re"} className="flex">
+          <NavLink to={"/favorites"} className="flex">
             <Icon icon="ic:outline-favorite-border" height="25" />
             Favorites
           </NavLink>
@@ -41,7 +41,7 @@ function Sidebar() {
           </NavLink>
         </li>
         <li>
-          <NavLink to={"/#activt"} className="flex">
+          <NavLink to={"/activity"} className="flex">
             <Icon icon="fluent:shifts-activity-24-filled" height="25" />
             Activity
           </NavLink>

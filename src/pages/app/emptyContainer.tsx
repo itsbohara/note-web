@@ -8,9 +8,17 @@ function EmptyContainer() {
         display: "grid",
         background: "#f8f8f8",
         placeContent: "center",
+        placeItems: "center",
       }}
     >
-      <h5>Create a note</h5>
+      <h3>Create a note</h3>
+      <div className="flex" style={{ gap: 10 }}>
+        <p style={{ background: "#fefefe", padding: '0 4px' }}>Ctrl</p>
+        <p>+</p>
+        <p style={{ background: "#fefefe", padding: '0 4px' }}>Alt</p>
+        <p>+</p>
+        <p style={{ background: "#fefefe", padding: '0 4px' }}>N</p>
+      </div>
     </div>
   );
 }

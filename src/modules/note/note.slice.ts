@@ -120,14 +120,16 @@ export const {
 
 interface noteProps {
   trash?: boolean;
+  favorite?: boolean;
 }
 export function getNotes(props?: noteProps) {
   return async (dispatch, getState) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(
-        `/notes${props?.trash ? "?trash=true" : ""}`
-      );
+      let params = "";
+      if (props?.favorite) params = "?favorites=true";
+      else if (props?.trash) params = "?trash=true";
+      const response = await axios.get(`/notes${params}`);
       dispatch(slice.actions.getNotesSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));

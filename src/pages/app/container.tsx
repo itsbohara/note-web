@@ -24,6 +24,7 @@ import dayjs from "dayjs";
 import NoteItem from "components/note/NoteItem";
 import TrashNoteItem from "components/note/TrashItem";
 import { Allotment } from "allotment";
+import { getNoteSuccess } from "modules/note/note.slice";
 
 function NotesAppContainer() {
   const dispath = useAppDispatch();
@@ -33,13 +34,15 @@ function NotesAppContainer() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isTrash = pathname.includes("/trash");
+  const isFavorites = pathname.includes("/favorites");
   function handleNewNoteNavigation() {
     if (!writeMode) dispath(onWritingMode(true));
     navigate("/notes/new");
   }
 
   useEffect(() => {
-    if (isTrash) dispath(getNotes({ trash: true }));
+    if (isFavorites) dispath(getNotes({ favorite: true }));
+    else if (isTrash) dispath(getNotes({ trash: true }));
     else dispath(getNotes());
   }, [pathname]);
 
@@ -51,6 +54,12 @@ function NotesAppContainer() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+    // clear active note, if notes lenght is less than 1
+    if (notes.allIds.length < 1) dispath(getNoteSuccess(null));
+  }, [notes]);
 
   if (isLoading) {
     return (
@@ -118,7 +127,7 @@ function NotesAppContainer() {
                 onClick={handleNewNoteNavigation}
               />
             )}
-            {isTrash && (
+            {isTrash && notes.allIds.length > 0 && (
               <IButton
                 icon={"material-symbols:delete"}
                 circular={true}

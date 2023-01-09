@@ -4,6 +4,7 @@
 
 - trash clean
 - switched panel resizer to allotment
+- favorite notes
 
 ## v1.0.0
 

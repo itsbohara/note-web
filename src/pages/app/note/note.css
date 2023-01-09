@@ -8,6 +8,10 @@
   border: none;
   outline: none;
 }
+.note-container .editor-header input:disabled {
+  background: inherit;
+  color: inherit;
+}
 .note-container .editor {
   padding: 15px 10px;
   outline: none;
