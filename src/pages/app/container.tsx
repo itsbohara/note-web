@@ -69,6 +69,16 @@ function NotesAppContainer() {
     };
   }, [notes]);
 
+  const _notes = iterateObject(notes.byId).sort(
+    (a, b) =>
+      new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime()
+  );
+
+  // last note updated time
+  useEffect(() => {
+    if (_notes.length > 0) dispath(onUpdateLastSave(_notes[0].updatedAt));
+  }, [_notes]);
+
   if (isLoading) {
     return (
       <div className="h-1" style={{ display: "grid", placeContent: "center" }}>
@@ -76,14 +86,6 @@ function NotesAppContainer() {
       </div>
     );
   }
-
-  const _notes = iterateObject(notes.byId).sort(
-    (a, b) =>
-      new Date(b?.updatedAt).getTime() - new Date(a?.updatedAt).getTime()
-  );
-
-  // last note updated time
-  if (_notes.length > 0) dispath(onUpdateLastSave(_notes[0].updatedAt));
 
   function handleNoteTrash(noteID) {
     dispath(trashNote(noteID));
@@ -166,12 +168,17 @@ function NotesAppContainer() {
               {[...(search ? searchRes : _notes)].map((note) =>
                 isTrash ? (
                   <TrashNoteItem
+                    key={note.id}
                     note={note}
                     onDelete={handleNoteDelete}
                     onRestore={handleNoteRestore}
                   />
                 ) : (
-                  <NoteItem note={note} onTrash={handleNoteTrash} />
+                  <NoteItem
+                    key={note.id}
+                    note={note}
+                    onTrash={handleNoteTrash}
+                  />
                 )
               )}
             </SimpleBar>

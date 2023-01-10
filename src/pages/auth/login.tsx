@@ -15,8 +15,8 @@ function LoginPage() {
     setError(null);
     try {
       await login(email, password);
-    } catch (error) {
-      setError(error);
+    } catch (error: any) {
+      setError(error?.message ?? error);
     }
   }
 

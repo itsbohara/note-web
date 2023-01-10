@@ -21,7 +21,7 @@ import InlineCode from "@editorjs/inline-code";
 // import Image from "@editorjs/image";
 // import Raw from "@editorjs/raw";
 
-import { createReactEditorJS } from "react-editor-js";
+// import { createReactEditorJS } from "react-editor-js";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/useApp";
 import {
@@ -52,7 +52,7 @@ const EDITOR_JS_TOOLS = {
   inlineCode: InlineCode,
   // simpleImage: SimpleImage,
 };
-const ReactEditorJS = createReactEditorJS();
+// const ReactEditorJS = createReactEditorJS();
 
 function NoteContainer() {
   const { activeNote } = useAppSelector((state) => state.notes);
